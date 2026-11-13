@@ -607,6 +607,7 @@ ul { padding: 0; list-style: none; }
 }
 
 .listing-card .card-photo {
+  position: relative;
   background: var(--paper-deep);
   overflow: hidden;
 }
@@ -619,7 +620,81 @@ ul { padding: 0; list-style: none; }
   transition: transform 0.8s var(--ease);
 }
 
-.listing-card:hover img { transform: scale(1.03); }
+.listing-card:hover img,
+.listing-card:focus-visible img { transform: scale(1.03); }
+
+.listing-card:focus-visible {
+  outline: 2px solid var(--cinnabar);
+  outline-offset: 4px;
+}
+
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 1.25rem 1.45rem;
+  background: linear-gradient(
+    180deg,
+    rgba(27, 23, 20, 0) 42%,
+    rgba(27, 23, 20, 0.55) 100%
+  );
+  pointer-events: none;
+  transition: background 0.45s var(--ease);
+}
+
+.card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.26em;
+  color: var(--paper);
+  border: 1px solid rgba(243, 238, 228, 0.9);
+  padding: 0.68rem 1.4rem 0.68rem 1.55rem;
+  background: rgba(27, 23, 20, 0.38);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease, transform 0.35s var(--ease);
+}
+
+.card-cta i {
+  font-style: normal;
+  letter-spacing: 0;
+  font-family: var(--latin);
+  font-size: 1.05em;
+}
+
+/* Desktop: hover deepens the veil and fills the button */
+@media (hover: hover) and (pointer: fine) {
+  .listing-card:hover .card-overlay,
+  .listing-card:focus-visible .card-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(27, 23, 20, 0.1) 28%,
+      rgba(27, 23, 20, 0.62) 100%
+    );
+  }
+  .listing-card:hover .card-cta,
+  .listing-card:focus-visible .card-cta {
+    background: var(--paper);
+    color: var(--ink);
+    border-color: var(--paper);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .listing-card img,
+  .listing-card:hover img,
+  .listing-card:focus-visible img {
+    transition: none;
+    transform: none;
+  }
+}
 
 .card-meta {
   padding: 1.6rem 0.2rem 0;
