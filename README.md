@@ -8,7 +8,7 @@
 ## 加入新案件
 
 1. 在 `listings/` 新增一份 JSON，檔名用網址代稱，例如 `listings/tianmu-xx.json`，可先複製 `listings/jianan.json`
-2. 把照片放到 `assets/img/<代稱>/`，主視覺檔名寫進 JSON 的 `hero`
+2. 把照片放到 `assets/img/<代稱>/`，主視覺檔名寫進 JSON 的 `hero`（可用 `.jpg` 或 `.svg`）
 3. 在專案根目錄執行：
 
 ```bash
