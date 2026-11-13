@@ -212,6 +212,9 @@ def home_html(items: list[dict], base_url: str) -> str:
       <a class="listing-card" href="{it['slug']}/">
         <div class="card-photo">
           <img src="{img}" alt="{it['heroAlt']}" width="1200" height="900">
+          <span class="card-overlay" aria-hidden="true">
+            <span class="card-cta">看這間 <i>→</i></span>
+          </span>
         </div>
         <div class="card-meta">
           <p class="loc">{it['eyebrow']}</p>
