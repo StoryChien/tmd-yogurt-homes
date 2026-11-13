@@ -28,13 +28,13 @@
     }
     var ig = instagramId(url);
     if (ig) {
-      var kind = /\/reel\//.test(url) ? "reel" : "p";
+      var kind = /\/tv\//.test(url) ? "tv" : (/\/reel\//.test(url) ? "reel" : "p");
       return (
         '<iframe src="https://www.instagram.com/' +
         kind +
         "/" +
         ig +
-        '/embed" title="Instagram 影片" allowtransparency="true" allow="encrypted-media" loading="lazy"></iframe>'
+        '/embed" title="物件影片" allowtransparency="true" allow="encrypted-media; clipboard-write; picture-in-picture" allowfullscreen loading="lazy"></iframe>'
       );
     }
     return "";
@@ -46,6 +46,7 @@
     var html = embedHtml(url);
     if (!html) return;
     root.classList.remove("is-empty");
+    if (instagramId(url)) root.classList.add("is-instagram");
     root.innerHTML = html;
   }
 
