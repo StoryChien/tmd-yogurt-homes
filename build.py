@@ -343,8 +343,10 @@ def main() -> None:
     (SITE / "404.html").write_text(notfound_html(), encoding="utf-8")
     (SITE / "assets" / "img" / "favicon.svg").write_text(FAVICON, encoding="utf-8")
     (SITE / ".nojekyll").write_text("", encoding="utf-8")
-    (ROOT / "README.md").write_text(README, encoding="utf-8")
-    (SITE / "README.md").write_text(README, encoding="utf-8")
+    if not (ROOT / "README.md").exists():
+        (ROOT / "README.md").write_text(README, encoding="utf-8")
+    if SITE != ROOT and not (SITE / "README.md").exists():
+        (SITE / "README.md").write_text(README, encoding="utf-8")
 
     for it in items:
         d = SITE / it["slug"]
