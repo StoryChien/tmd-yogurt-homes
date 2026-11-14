@@ -85,6 +85,7 @@ def head(title: str, desc: str, asset: str, canonical: str = "", og_image: str =
   <link rel="icon" href="{asset}/img/favicon.svg" type="image/svg+xml">
 {FONT_LINKS}
   <link rel="stylesheet" href="{asset}/css/site.css">
+<script data-goatcounter="https://tmdyogurt.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>"""
 
 
