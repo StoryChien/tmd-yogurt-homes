@@ -146,7 +146,7 @@ def listing_html(item: dict, base_url: str) -> str:
       <div class="floorplan-frame">
 {rp_body}
       </div>""" if rp_body else ""
-        note = "本物件附近地址實價登錄" if rp_body else "實價登錄整理中"
+        note = (item.get("realpriceCaption") or "本物件附近地址實價登錄") if rp_body else "實價登錄整理中"
         rp_html = f"""\
     <section class="section" id="realprice">
       <h2 class="section-title">實價登錄</h2>{frame}
