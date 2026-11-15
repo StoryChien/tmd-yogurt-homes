@@ -221,6 +221,26 @@ def listing_html(item: dict, base_url: str) -> str:
 """
 
 
+import re as _re
+
+
+def filter_data(it: dict) -> dict:
+    """Filter attributes for the homepage, derived from the listing JSON; `filters` overrides."""
+    specs = {x["label"]: x["value"] for x in it.get("specs", [])}
+    f = dict(it.get("filters") or {})
+    if "area" not in f:
+        m = _re.match(r"(.{1,3}?區)", it.get("district", ""))
+        f["area"] = m.group(1) if m else it.get("district", "")[:3]
+    if "price" not in f:
+        f["price"] = float(it.get("priceNum") or 0)
+    if "rooms" not in f:
+        m = _re.search(r"(\d+)房", specs.get("格局", ""))
+        f["rooms"] = int(m.group(1)) if m else 0
+    if "parking" not in f:
+        f["parking"] = not str(specs.get("車位", "無")).startswith("無")
+    return f
+
+
 def home_html(items: list[dict], base_url: str) -> str:
     title = "精選待售案件｜天母的優格"
     desc = "天母的優格精選待售案件，松山、士林與北士科一帶的住宅"
@@ -231,8 +251,9 @@ def home_html(items: list[dict], base_url: str) -> str:
     cards = []
     for it in items:
         img = f"assets/img/{it['slug']}/{it['hero']}"
+        fd = filter_data(it)
         cards.append(f"""\
-      <a class="listing-card" href="{it['slug']}/">
+      <a class="listing-card" href="{it['slug']}/" data-area="{fd['area']}" data-price="{fd['price']:g}" data-rooms="{fd['rooms']}" data-parking="{'1' if fd['parking'] else '0'}">
         <div class="card-photo">
           <img src="{img}" alt="{it['heroAlt']}" width="1200" height="900">
           <span class="card-overlay" aria-hidden="true">
@@ -247,6 +268,47 @@ def home_html(items: list[dict], base_url: str) -> str:
         </div>
       </a>""")
     body_cards = "\n".join(cards) if cards else '<p class="empty-listings">目前沒有待售案件</p>'
+    areas = sorted({filter_data(it)["area"] for it in items})
+    area_opts = "".join(f'<option value="{a}">{a.replace("區", "")}</option>' for a in areas)
+    filter_bar = f"""\
+    <section class="filter-bar" aria-label="篩選物件">
+      <button class="filter-toggle" type="button" aria-expanded="false" aria-controls="filter-panel">
+        <span>篩選</span><span class="filter-count" data-filter-count>{len(items)} 間</span>
+      </button>
+      <form class="filter-panel" id="filter-panel" autocomplete="off">
+        <label class="filter-field"><span>區域</span>
+          <select name="area"><option value="">全部</option>{area_opts}</select>
+        </label>
+        <label class="filter-field"><span>總價</span>
+          <select name="price">
+            <option value="">不限</option>
+            <option value="0-2000">2000萬以下</option>
+            <option value="2000-5000">2000到5000萬</option>
+            <option value="5000-">5000萬以上</option>
+          </select>
+        </label>
+        <label class="filter-field"><span>房數</span>
+          <select name="rooms">
+            <option value="">不限</option>
+            <option value="1">1房</option>
+            <option value="2">2房</option>
+            <option value="3">3房</option>
+            <option value="4">4房以上</option>
+          </select>
+        </label>
+        <label class="filter-field"><span>車位</span>
+          <select name="parking">
+            <option value="">不限</option>
+            <option value="1">有車位</option>
+            <option value="0">沒有車位</option>
+          </select>
+        </label>
+        <div class="filter-foot">
+          <p class="filter-result" data-filter-result>共 {len(items)} 間</p>
+          <button class="filter-reset" type="reset">清除條件</button>
+        </div>
+      </form>
+    </section>""" if len(items) > 1 else ""
     return f"""\
 {head(title, desc, "assets", canonical, og_image)}
 <body>
@@ -257,11 +319,14 @@ def home_html(items: list[dict], base_url: str) -> str:
       <h1>天母的優格</h1>
       <p class="sub">精選待售案件</p>
     </section>
-    <section class="listings">
+{filter_bar}
+    <section class="listings" id="listings" aria-live="polite">
 {body_cards}
+      <p class="empty-listings filter-empty" hidden>沒有符合條件的物件，換個條件看看</p>
     </section>
   </main>
 {FOOTER}
+  <script src="assets/js/home.js"></script>
 </body>
 </html>
 """
@@ -370,7 +435,8 @@ def main() -> None:
     (SITE / "index.html").write_text(home_html(items, base_url), encoding="utf-8")
     (SITE / "404.html").write_text(notfound_html(), encoding="utf-8")
     (SITE / "assets" / "img" / "favicon.svg").write_text(FAVICON, encoding="utf-8")
-    (SITE / ".nojekyll").write_text("", encoding="utf-8")
+    if not (SITE / ".nojekyll").exists():
+        (SITE / ".nojekyll").write_text("", encoding="utf-8")
     if not (ROOT / "README.md").exists():
         (ROOT / "README.md").write_text(README, encoding="utf-8")
     if SITE != ROOT and not (SITE / "README.md").exists():

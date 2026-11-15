@@ -627,6 +627,174 @@ ul { padding: 0; list-style: none; }
   margin: 0 auto;
 }
 
+.listing-card[hidden] { display: none; }
+
+/* grid: phone one by one, tablet 2, desktop 3 */
+.listings {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3.4rem 2rem;
+  align-items: start;
+}
+
+.listings .empty-listings { grid-column: 1 / -1; }
+.listings .card-meta h2 { text-wrap: balance; }
+
+@media (min-width: 720px) {
+  .listings { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem 1.75rem; }
+  .listings .listing-card { max-width: none; width: 100%; }
+  .listings .card-meta h2 { font-size: clamp(1.35rem, 2.4vw, 1.75rem); letter-spacing: 0.12em; }
+  .listings .card-meta .card-price { font-size: 1.75rem; }
+}
+
+@media (min-width: 1100px) {
+  .listings { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3.2rem 2rem; }
+  .listings .card-meta h2 { font-size: 1.45rem; letter-spacing: 0.08em; }
+  .listings .card-meta .sum { font-size: 0.88rem; }
+}
+
+/* ---------- homepage filter ---------- */
+.filter-bar {
+  max-width: var(--max);
+  margin: 0 auto 2.4rem;
+  padding: 0 var(--pad);
+}
+
+.filter-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3rem;
+  padding: 0.6rem 0.2rem;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  letter-spacing: 0.32em;
+  color: var(--ink);
+}
+
+.filter-toggle::after {
+  content: "+";
+  font-family: var(--latin);
+  font-size: 1.3rem;
+  letter-spacing: 0;
+  line-height: 1;
+  margin-left: 0.8rem;
+  color: var(--mute);
+}
+
+.filter-toggle[aria-expanded="true"]::after { content: "–"; }
+
+.filter-toggle .filter-count {
+  margin-left: auto;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--mute);
+}
+
+.filter-toggle.is-active span:first-child { color: var(--cinnabar); }
+
+.filter-panel {
+  display: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 0.9rem;
+  padding: 1.3rem 0.2rem 1.4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.filter-panel.is-open { display: grid; }
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.filter-field > span {
+  font-size: 0.68rem;
+  letter-spacing: 0.36em;
+  color: var(--mute);
+}
+
+.filter-field select {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.55rem 2.2rem 0.55rem 0.85rem;
+  font-family: var(--serif);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  background:
+    var(--paper-lift)
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%237a7268' stroke-width='1.2'/></svg>")
+    no-repeat right 0.85rem center;
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.filter-field select:hover,
+.filter-field select:focus-visible {
+  border-color: var(--ink);
+  outline: none;
+}
+
+.filter-foot {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.filter-result {
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+}
+
+.filter-reset {
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  color: var(--mute);
+  padding: 0.6rem 0;
+  border-bottom: 1px solid transparent;
+}
+
+.filter-reset:hover,
+.filter-reset:focus-visible { color: var(--cinnabar); border-bottom-color: var(--cinnabar); outline: none; }
+
+@media (min-width: 880px) {
+  .filter-toggle { display: none; }
+  .filter-panel,
+  .filter-panel.is-open {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    align-items: end;
+    gap: 1.1rem;
+    padding: 1.4rem 0;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .filter-foot {
+    grid-column: auto;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 0.1rem;
+    min-height: 2.9rem;
+    padding-left: 0.6rem;
+  }
+  .filter-reset { padding: 0.2rem 0; }
+}
+
 .listing-card .card-photo {
   position: relative;
   background: var(--paper-deep);
