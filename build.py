@@ -133,6 +133,26 @@ def listing_html(item: dict, base_url: str) -> str:
       <p class="caption">{fp['caption']}</p>
     </section>"""
 
+    rp_html = ""
+    if "realprice" in item:
+        rp = (item.get("realprice") or "").strip()
+        if rp:
+            rp_body = f"""        <a href="{rp}" data-gallery data-caption="本物件附近地址實價登錄">
+          <img src="{rp}" alt="本物件附近地址實價登錄" loading="lazy">
+        </a>"""
+        else:
+            rp_body = ""
+        frame = f"""
+      <div class="floorplan-frame">
+{rp_body}
+      </div>""" if rp_body else ""
+        note = "本物件附近地址實價登錄" if rp_body else "實價登錄整理中"
+        rp_html = f"""\
+    <section class="section" id="realprice">
+      <h2 class="section-title">實價登錄</h2>{frame}
+      <p class="caption">{note}</p>
+    </section>"""
+
     video = (item.get("video") or "").strip()
     video_attr = f' data-video="{video}"' if video else ""
 
@@ -189,6 +209,8 @@ def listing_html(item: dict, base_url: str) -> str:
     </section>
 
 {fp_html}
+
+{rp_html}
 
 {CONTACT}
   </main>
@@ -341,7 +363,9 @@ def main() -> None:
 
     # copy listing json into site for runtime video updates
     for p in LISTINGS_DIR.glob("*.json"):
-        shutil.copy2(p, SITE / "listings" / p.name)
+        dst = SITE / "listings" / p.name
+        if p.resolve() != dst.resolve():
+            shutil.copy2(p, dst)
 
     (SITE / "index.html").write_text(home_html(items, base_url), encoding="utf-8")
     (SITE / "404.html").write_text(notfound_html(), encoding="utf-8")
