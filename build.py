@@ -122,12 +122,14 @@ def listing_html(item: dict, base_url: str) -> str:
     fp_html = ""
     if fp:
         src = f"{img}/{fp['file']}"
+        fp_w = int(fp.get("width") or 1200)
+        fp_h = int(fp.get("height") or 805)
         fp_html = f"""\
     <section class="section" id="floorplan">
       <h2 class="section-title">格局</h2>
       <div class="floorplan-frame">
         <a href="{src}" data-gallery data-caption="{fp['caption']}">
-          <img src="{src}" alt="{fp['alt']}" width="1200" height="805" loading="lazy">
+          <img src="{src}" alt="{fp['alt']}" width="{fp_w}" height="{fp_h}" loading="lazy">
         </a>
       </div>
       <p class="caption">{fp['caption']}</p>
